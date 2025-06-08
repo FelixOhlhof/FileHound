@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Icons/match-case.xaml" />
+        <ResourceDictionary Source="Icons/match-whole-word-16.xaml" />
+        <ResourceDictionary Source="Icons/regex.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>
