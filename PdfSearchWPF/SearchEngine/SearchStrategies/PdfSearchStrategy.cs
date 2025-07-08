@@ -6,26 +6,29 @@ using IO = System.IO;
 
 namespace PdfSearchWPF.SearchEngine.SearchStrategies
 {
-  internal class PdfSearchStrategy(SearchStrategyOptions? strategyOptions = null) : ISearchStrategy
+  internal class PdfSearchStrategy(Settings? settings = null) : ISearchStrategy
   {
-    private readonly SearchStrategyOptions? _strategyOptions = strategyOptions;
-
     public string Name => "PDF Search";
+
+    public string Description => "Default PDF Search Strategy";
 
     public List<string> SupportedFileExtensions => ["pdf"];
 
-    public IEnumerable<SearchStrategyOption> GetSupportedOptions() =>
-      [
-        new SearchStrategyOption
-        {
-          Name = "CountAll",
-          Description = "Counts all occurrences.",
-          ValueType = typeof(bool)
-        }
+    public Settings? Settings { get; set; } = settings;
+
+    public IEnumerable<SettingDefinition> SupportedSettings => [
+        new SettingDefinition
+        (
+          name: "CountAll",
+          description: "Counts all occurrences.",
+          standardValue: true,
+          valueType: SettingType.Bool
+        )
       ];
 
     public bool CanHandle(string filePath)
         => IO.Path.GetExtension(filePath).Equals(".pdf", StringComparison.OrdinalIgnoreCase);
+
 
     public SearchResult SearchFile(string filePath, string searchTerm, SearchOption searchOptions)
     {
@@ -86,7 +89,7 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
           }
 
           bool countAll = true;
-          _strategyOptions?.TryGet("CountAll", out countAll);
+          Settings?.TryGet("CountAll", out countAll);
           if (!countAll && occurrences > 0)
             break;
         }

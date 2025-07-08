@@ -1,37 +1,54 @@
 ﻿using PdfSearchWPF.Exceptions;
 using PdfSearchWPF.Model;
 using PdfSearchWPF.SearchEngine.SearchStrategies;
-using System.ComponentModel;
 using IO = System.IO;
 
 namespace PdfSearchWPF.SearchEngine
 {
-  public class SearchEngine(SearchEngineOptions options, List<ISearchStrategy> strategies) : INotifyPropertyChanged
+  public class SearchEngine : ISearchEngine
   {
-    private int _maxDegreeOfParallelism = calcMaxDegreeOfParallelism(options.MaxCpuUsagePercent);
-    private SearchEngineOptions _options = options;
-    private List<ISearchStrategy> _strategies = strategies;
+    private int _maxDegreeOfParallelism;
+    private double _maxCpuUsagePercent = 0.8;
+    private bool _executeMultipleStrategies = false;
+    private List<ISearchStrategy> _strategies;
+    private Settings? _settings;
 
-    public List<ISearchStrategy> Strategies
+    public SearchEngine(List<ISearchStrategy> strategies, Settings? settings = null)
     {
-      get { return _strategies; }
+      setSettings(settings);
+
+      _maxDegreeOfParallelism = calcMaxDegreeOfParallelism(_maxCpuUsagePercent);
+      _strategies = strategies;
+      _settings = settings;
+    }
+
+    public string Name => "Search Engine";
+
+    public string Description => "Default Search Engine";
+
+    public IEnumerable<SettingDefinition> SupportedSettings => [
+        new SettingDefinition
+        (
+          name: "CountAll",
+          description: "Counts all occurrences.",
+          standardValue: true,
+          valueType: SettingType.Bool
+        )
+      ];
+
+    public Settings? Settings
+    {
+      get { return _settings; }
       set
       {
-        _strategies = value;
-        OnPropertyChanged(nameof(Strategies));
+        setSettings(value);
+
+        _maxDegreeOfParallelism = calcMaxDegreeOfParallelism(_maxCpuUsagePercent);
+        _settings = value;
       }
     }
 
-    public SearchEngineOptions Options
-    {
-      get { return _options; }
-      set
-      {
-        _maxDegreeOfParallelism = calcMaxDegreeOfParallelism(_options.MaxCpuUsagePercent);
-        _options = value;
-        OnPropertyChanged(nameof(Options));
-      }
-    }
+    public List<ISearchStrategy> Strategies { get => _strategies; set => _strategies = value; }
 
     public event Action<int>? OnStartSearch;
     public event Action? OnSearchFinished;
@@ -86,7 +103,7 @@ namespace PdfSearchWPF.SearchEngine
               results.Add(result);
               OnFileSearched?.Invoke(result);
 
-              if (!Options.ExecuteMultipleStrategies)
+              if (!_executeMultipleStrategies)
                 break;
             }
           }
@@ -106,11 +123,13 @@ namespace PdfSearchWPF.SearchEngine
       return results;
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    private void setSettings(Settings? settings)
+    {
+      settings?.TryGet("MaxCpuUsagePercent", out _maxCpuUsagePercent);
+      settings?.TryGet("ExecuteMultipleStrategies", out _executeMultipleStrategies);
+    }
 
     private static int calcMaxDegreeOfParallelism(double maxCpuUsagePercent) => Math.Max(1, (int)(Environment.ProcessorCount * maxCpuUsagePercent));
+
   }
 }

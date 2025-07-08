@@ -4,12 +4,117 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PdfSearchWPF.Views"
+             xmlns:selectors="clr-namespace:PdfSearchWPF.Selectors"
+             xmlns:converters="clr-namespace:PdfSearchWPF.Converters"
+             xmlns:design="clr-namespace:PdfSearchWPF.DesignTime"
+             d:DataContext="{d:DesignInstance Type=design:DemoSettingsViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
+             Background="White"
              d:DesignHeight="450" d:DesignWidth="800">
+    <Control.Resources>
+        <converters:ToPrittyNameConverter x:Key="ToPrittyNameConverter" />
+
+        <DataTemplate x:Key="BoolTemplate">
+            <CheckBox IsChecked="{Binding Value, Mode=TwoWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="TextTemplate">
+            <TextBox Text="{Binding Value, Mode=TwoWay}" Width="100" BorderBrush="Transparent" HorizontalAlignment="Left" TextAlignment="Right"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NumberTemplate">
+            <TextBox Text="{Binding Value, Mode=TwoWay}" Width="100" BorderBrush="Transparent" HorizontalAlignment="Right" TextAlignment="Right"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DateTemplate">
+            <DatePicker SelectedDate="{Binding Value, Mode=TwoWay}" BorderBrush="Transparent" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
+        </DataTemplate>
+
+        <selectors:SettingTemplateSelector x:Key="SettingTemplateSelector"
+                                   BoolTemplate="{StaticResource BoolTemplate}"
+                                   TextTemplate="{StaticResource TextTemplate}"
+                                   NumberTemplate="{StaticResource NumberTemplate}"
+                                   DateTemplate="{StaticResource DateTemplate}" />
+
+        <Style x:Key="SettingHeadline" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="0, 10, 0, 5" />
+        </Style>
+    </Control.Resources>
     <Grid>
-        <StackPanel >
-            <Rectangle Fill="Red" Height="150" Width="300" Margin="10" />
-            <Rectangle Fill="Red" Height="150" Width="300" Margin="10" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel HorizontalAlignment="Left">
+            <Button Margin="4, 4, 0, 0" Width="30" Command="{Binding CloseCommand}" Style="{StaticResource MenuBarButtonStyle}" >
+                <Button.Content>
+                    <Path Data="{StaticResource X}" Fill="Black" Stretch="Uniform"/>
+                </Button.Content>
+            </Button>
         </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+            <StackPanel  HorizontalAlignment="Center">
+
+                <StackPanel>
+                    <TextBlock Text="{Binding SearchEngineSettings.DisplayName}" Style="{StaticResource SettingHeadline}" />                    
+                    <ItemsControl ItemsSource="{Binding SearchEngineSettings.Entries}" >
+                        <ItemsControl.ItemTemplate >
+                            <DataTemplate >
+                                <Grid Margin="0, 10, 0, 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <TextBlock Text="{Binding Definition.Name, Converter={StaticResource                        ToPrittyNameConverter}}" Width="150" ToolTip="{Binding                                  Definition.Description}"/>
+                                    
+                                    <ContentControl Grid.Column="1" HorizontalAlignment="Right" Content="{Binding}"            ContentTemplateSelector="{StaticResource SettingTemplateSelector}" />
+                                </Grid>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <ItemsControl ItemsSource="{Binding StrategySettings}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding DisplayName}" Style="{StaticResource SettingHeadline}" />
+
+                                <ItemsControl ItemsSource="{Binding Entries}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+
+                                            <Grid Margin="0, 10, 0, 0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="{Binding Definition.Name, Converter={StaticResource                        ToPrittyNameConverter}}" Width="150" ToolTip="{Binding                                  Definition.Description}"/>
+
+                                                <ContentControl Grid.Column="1" HorizontalAlignment="Right"                                 Content="{Binding}" ContentTemplateSelector="{StaticResource                            SettingTemplateSelector}" />
+                                            </Grid>
+                                            
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Button Command="{Binding SaveCommand}" Grid.Row="2" Content="Save" HorizontalAlignment="Right" Margin="0, 0, 10, 0"/>
     </Grid>
 </UserControl>

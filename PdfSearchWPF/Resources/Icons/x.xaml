@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Geometry x:Key="X">
+        F1 M50,50z M0,0z M7.71875,6.28125L6.28125,7.71875 23.5625,25 6.28125,42.28125 7.71875,43.71875 25,26.4375 42.28125,43.71875 43.71875,42.28125 26.4375,25 43.71875,7.71875 42.28125,6.28125 25,23.5625z
+    </Geometry>
+</ResourceDictionary>

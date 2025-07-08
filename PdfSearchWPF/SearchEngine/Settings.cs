@@ -1,6 +1,8 @@
-﻿namespace PdfSearchWPF.SearchEngine.SearchStrategies
+﻿using System.Collections;
+
+namespace PdfSearchWPF.SearchEngine
 {
-  public class SearchStrategyOptions
+  public class Settings : IEnumerable
   {
     private readonly Dictionary<string, object> _values = new();
 
@@ -26,6 +28,11 @@
 
       value = default!;
       return false;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return _values.GetEnumerator();
     }
   }
 

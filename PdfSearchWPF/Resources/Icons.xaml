@@ -4,5 +4,8 @@
         <ResourceDictionary Source="Icons/match-case.xaml" />
         <ResourceDictionary Source="Icons/match-whole-word-16.xaml" />
         <ResourceDictionary Source="Icons/regex.xaml" />
+        <ResourceDictionary Source="Icons/gear.xaml" />
+        <ResourceDictionary Source="Icons/info.xaml" />
+        <ResourceDictionary Source="Icons/x.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

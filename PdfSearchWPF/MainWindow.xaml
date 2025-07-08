@@ -5,22 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PdfSearchWPF"
         mc:Ignorable="d"
-        xmlns:usr="clr-namespace:PdfSearchWPF.Views"
+        xmlns:views="clr-namespace:PdfSearchWPF.Views" 
+        xmlns:viewModels="clr-namespace:PdfSearchWPF.ViewModel" 
         Title="MainWindow"
         Width="500"
-        Height="{Binding WindowHeight, Mode=TwoWay}"
-        MaxHeight="{Binding WindowMaxHeight, Mode=TwoWay}"
         MinWidth="400"
-        MinHeight="150"
+        MinHeight="170"
+        MaxHeight="170"
         >
-
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModels:MainViewModel}">
+            <views:MainView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
+            <views:SettingsView />
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <usr:SearchBar DataContext="{Binding SearchBarVM}"/>
-        <usr:SearchResultView DataContext="{Binding SearchResultVM}" Grid.Row="1" Margin="0, 10, 0, 0"/>
+        <ContentControl Content="{Binding CurrentViewModel}" />
     </Grid>
 </Window>

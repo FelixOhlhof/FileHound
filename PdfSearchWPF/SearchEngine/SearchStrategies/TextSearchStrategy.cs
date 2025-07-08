@@ -5,35 +5,41 @@ using IO = System.IO;
 
 namespace PdfSearchWPF.SearchEngine.SearchStrategies
 {
-  internal class TextSearchStrategy(SearchStrategyOptions? strategyOptions = null) : ISearchStrategy
+  internal class TextSearchStrategy(Settings? settings = null) : ISearchStrategy
   {
-    private readonly SearchStrategyOptions? _strategyOptions = strategyOptions;
-
     public string Name => "Text Search";
+
+    public string Description => "Default Text Search Strategy";
+
+    public Settings? Settings { get; set; } = settings;
 
     public List<string> SupportedFileExtensions => ["*"];
 
-    public IEnumerable<SearchStrategyOption> GetSupportedOptions() =>
-        [
-            new SearchStrategyOption
-            {
-                Name = "BufferSize",
-                Description = "Size of read buffer in bytes.",
-                ValueType = typeof(int)
-            },
-            new SearchStrategyOption
-            {
-                Name = "Encoding",
-                Description = "Choose between UTF8, Unicode or ASCII.",
-                ValueType = typeof(string)
-            },
-            new SearchStrategyOption
-            {
-                Name = "CountAll",
-                Description = "Counts all occurences.",
-                ValueType = typeof(bool)
-            }
+    public IEnumerable<SettingDefinition> SupportedSettings => [
+            new SettingDefinition
+            (
+                name : "BufferSize",
+                description : "Size of read buffer in bytes.",
+                standardValue : 16 * 1024,
+                valueType : SettingType.Number
+            ),
+            new SettingDefinition
+            (
+                name : "Encoding",
+                description : "Choose between UTF8, Unicode or ASCII.",
+                standardValue : "UTF8",
+                valueType : SettingType.Text
+            ),
+            new SettingDefinition
+            (
+                name : "CountAll",
+                description : "Counts all occurences.",
+                standardValue : true,
+                valueType : SettingType.Bool
+            )
         ];
+
+
 
     public bool CanHandle(string filePath)
         => IO.Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase);
@@ -66,12 +72,12 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
       }
 
       string encoding = "UTF8"; // default
-      _strategyOptions?.TryGet("Encoding", out encoding);
+      Settings?.TryGet("Encoding", out encoding);
 
       using var reader = new IO.StreamReader(filePath, encoding: stringToEncoding(encoding));
 
       int bufferSize = 16 * 1024; // default
-      _strategyOptions?.TryGet("BufferSize", out bufferSize);
+      Settings?.TryGet("BufferSize", out bufferSize);
 
       char[] buffer = new char[bufferSize];
       int read;
@@ -111,7 +117,7 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
         }
 
         bool countAll = true;
-        _strategyOptions?.TryGet("CountAll", out countAll);
+        Settings?.TryGet("CountAll", out countAll);
 
         if (!countAll)
           break;

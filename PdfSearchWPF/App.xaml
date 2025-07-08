@@ -10,18 +10,18 @@
             </ResourceDictionary.MergedDictionaries>
             
             <Style TargetType="Button">
-                <Setter Property="Background" Value="LightGray"/>
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="FontWeight" Value="Thin"/>
-                <Setter Property="FontSize" Value="15"/>
-                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Width" Value="100" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Margin" Value="0, 0, 0, 0" />
+                <Setter Property="Background" Value="LightGray" />
                 <Setter Property="BorderBrush" Value="Transparent"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}"
-                            CornerRadius="4"
+                            CornerRadius="6"
                             Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"/>
@@ -29,6 +29,12 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <Style x:Key="MenuBarButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

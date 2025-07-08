@@ -30,7 +30,6 @@ namespace PdfSearchWPF.ViewModel
 
     public bool HasResults => SearchResults != null && SearchResults.Count > 0;
 
-
     public void AddResult(SearchResult result)
     {
       if (result.Error?.GetType() == typeof(FileTypeNotSupportedException))
