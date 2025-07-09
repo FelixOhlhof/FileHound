@@ -35,6 +35,8 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
       bool useRegex = searchOptions.HasFlag(SearchOption.Regex);
       bool matchWholeWord = searchOptions.HasFlag(SearchOption.MatchWholeWord);
       bool matchCase = searchOptions.HasFlag(SearchOption.MatchCase);
+      bool countAll = true;
+      Settings?.TryGet("CountAll", out countAll);
 
       int occurrences = 0;
       Regex? regex = null;
@@ -57,11 +59,20 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
 
         foreach (var page in document.GetPages())
         {
+          if (!countAll && occurrences > 0)
+            break;
+
           string text = page.Text;
 
           if (useRegex && regex != null)
           {
-            occurrences += regex.Matches(text).Count;
+            if (countAll)
+              occurrences += regex.Matches(text).Count;
+            else
+            {
+              occurrences = regex.IsMatch(text) ? 1 : 0;
+              break;
+            }
           }
           else
           {
@@ -85,13 +96,11 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
               }
 
               index += searchTerm.Length;
+
+              if (!countAll && occurrences > 0)
+                break;
             }
           }
-
-          bool countAll = true;
-          Settings?.TryGet("CountAll", out countAll);
-          if (!countAll && occurrences > 0)
-            break;
         }
       }
       catch (Exception ex)

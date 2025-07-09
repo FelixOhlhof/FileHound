@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:PdfSearchWPF.Views"
              mc:Ignorable="d" 
              Background="White"
+             d:DesignHeight="250" d:DesignWidth="400"
              >
     <Grid>
         <Grid.RowDefinitions>
@@ -18,12 +19,6 @@
             <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource MenuBarButtonStyle}" Margin="0, 0, 3, 0">
                 <Button.Content>
                     <Path Data="{StaticResource Gear}" Fill="Black" Stretch="Uniform"/>
-                </Button.Content>
-            </Button>
-
-            <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource MenuBarButtonStyle}">
-                <Button.Content>
-                    <Path Data="{StaticResource Info}" Fill="Black" Stretch="Uniform"/>
                 </Button.Content>
             </Button>
         </StackPanel>
