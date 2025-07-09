@@ -158,6 +158,9 @@ namespace PdfSearchWPF.ViewModel
     {
       IsSearching = true;
 
+      if (SelectedFileTypes.Count == 0)
+        SelectedFileTypes.Add("All Files");
+
       try
       {
         _ = SearchPath ?? throw new ArgumentNullException("SearchPath");
