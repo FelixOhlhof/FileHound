@@ -6,7 +6,7 @@
     None = 0,
     Regex = 1 << 0,
     MatchWholeWord = 1 << 1,
-    MatchCase = 2 << 2,
-    Recursive = 3 << 3,
+    MatchCase = 1 << 2,
+    Recursive = 1 << 3,
   }
 }

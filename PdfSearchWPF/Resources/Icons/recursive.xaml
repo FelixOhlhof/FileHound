@@ -1,0 +1,7 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Geometry x:Key="Recursive">
+        F1 M1024,1024z M0,0z M128,384L128,832 896,832 896,384 128,384z M96,320L928,320A32,32,0,0,1,960,352L960,864A32,32,0,0,1,928,896L96,896A32,32,0,0,1,64,864L64,352A32,32,0,0,1,96,320z M160,192L864,192 864,256 160,256z M256,64L768,64 768,128 256,128z
+    </Geometry>
+</ResourceDictionary>

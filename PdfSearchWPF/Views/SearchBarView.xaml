@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PdfSearchWPF.Views"
+             xmlns:controls="clr-namespace:PdfSearchWPF.Controls"
              xmlns:converters="clr-namespace:PdfSearchWPF.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="800">
@@ -12,18 +13,27 @@
         <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
 
         <Style x:Key="OptionButton" TargetType="Button">
-            <Setter Property="Height" Value="25" />
-            <Setter Property="Width" Value="25" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Width" Value="30" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Margin" Value="4, 0, 0, 0" />
             <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3" Padding="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -47,7 +57,7 @@
 
         <Button Grid.Row="1" Grid.Column="1" Command="{Binding SearchCommand}" Content="Run Search"   Height="25" IsEnabled="{Binding CanSearch}"/>
         
-        <StackPanel Grid.Row="2" FlowDirection="LeftToRight" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" FlowDirection="LeftToRight" Orientation="Horizontal" Grid.ColumnSpan="2">
 
             <Button Command="{Binding ToggleMatchCaseCommand}" 
                     Background="{Binding MatchCase, Converter={StaticResource BoolToBrushConverter}}" 
@@ -79,7 +89,17 @@
                     <Path Data="{StaticResource Regex}" Fill="Black" Stretch="Uniform" Margin="1"/>
                 </Button.Content>
             </Button>
-            
+
+            <Button Command="{Binding ToggleRecursiveCommand}" 
+                    Background="{Binding ScanRecursive, Converter={StaticResource BoolToBrushConverter}}"
+                    Style="{StaticResource OptionButton}" 
+                    ToolTip="Scan Directory recursive">
+                <Button.Content>
+                    <Path Data="{StaticResource Recursive}" Fill="Black" Stretch="Uniform" Margin="1"/>
+                </Button.Content>
+            </Button>
+            <controls:MultiSelectDropdown Width="150" PlaceholderText="Choose File Extensions..." ItemsSource="{Binding AvailableFileTypes}" 
+                                      SelectedItems="{Binding SelectedFileTypes}" />
         </StackPanel>
     </Grid>
 </UserControl>

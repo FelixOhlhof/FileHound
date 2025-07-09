@@ -26,6 +26,12 @@
                                 <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"/>
                             </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Disabled-Zustand -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="#888" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

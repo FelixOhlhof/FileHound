@@ -7,5 +7,6 @@
         <ResourceDictionary Source="Icons/gear.xaml" />
         <ResourceDictionary Source="Icons/info.xaml" />
         <ResourceDictionary Source="Icons/x.xaml" />
+        <ResourceDictionary Source="Icons/recursive.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

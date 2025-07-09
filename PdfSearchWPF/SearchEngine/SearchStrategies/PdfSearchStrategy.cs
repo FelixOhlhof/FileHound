@@ -6,7 +6,7 @@ using IO = System.IO;
 
 namespace PdfSearchWPF.SearchEngine.SearchStrategies
 {
-  internal class PdfSearchStrategy(Settings? settings = null) : ISearchStrategy
+  internal class PdfSearchStrategy(Settings? settings = null, bool isActivated = true) : ISearchStrategy
   {
     public string Name => "PDF Search";
 
@@ -15,6 +15,8 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
     public List<string> SupportedFileExtensions => ["pdf"];
 
     public Settings? Settings { get; set; } = settings;
+
+    public bool IsActivated { get; set; } = isActivated;
 
     public IEnumerable<SettingDefinition> SupportedSettings => [
         new SettingDefinition
@@ -25,6 +27,7 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
           valueType: SettingType.Bool
         )
       ];
+
 
     public bool CanHandle(string filePath)
         => IO.Path.GetExtension(filePath).Equals(".pdf", StringComparison.OrdinalIgnoreCase);

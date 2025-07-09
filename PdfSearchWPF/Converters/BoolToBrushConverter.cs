@@ -6,7 +6,7 @@ namespace PdfSearchWPF.Converters
 {
   public class BoolToBrushConverter : IValueConverter
   {
-    public Brush TrueBrush { get; set; } = Brushes.LightBlue;
+    public Brush TrueBrush { get; set; } = Brushes.LightGray;
     public Brush FalseBrush { get; set; } = Brushes.Transparent;
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -5,13 +5,15 @@ using IO = System.IO;
 
 namespace PdfSearchWPF.SearchEngine.SearchStrategies
 {
-  internal class TextSearchStrategy(Settings? settings = null) : ISearchStrategy
+  internal class TextSearchStrategy(Settings? settings = null, bool isActivated = true) : ISearchStrategy
   {
     public string Name => "Text Search";
 
     public string Description => "Default Text Search Strategy";
 
     public Settings? Settings { get; set; } = settings;
+
+    public bool IsActivated { get; set; } = isActivated;
 
     public List<string> SupportedFileExtensions => ["*"];
 

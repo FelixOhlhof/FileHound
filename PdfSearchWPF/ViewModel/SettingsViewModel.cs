@@ -65,6 +65,8 @@ namespace PdfSearchWPF.ViewModel
           DisplayName = $"{strategy.Name} Settings"
         };
 
+        section.Entries.Add(new SettingEntry(new SearchEngine.SettingDefinition("IsActive", "De-/Activates this Search Strategy", strategy.IsActivated, SearchEngine.SettingType.Bool), strategy.IsActivated));
+
         foreach (var def in strategy.SupportedSettings)
         {
           object? value = null;
@@ -89,6 +91,8 @@ namespace PdfSearchWPF.ViewModel
       {
         var strategy = _searchEngine.Strategies.First(x => x.Name == section.Name);
         strategy.Settings ??= new();
+
+        strategy.IsActivated = (bool)(section.Entries.Find(x => x.Definition.Name == "IsActive")?.Value ?? true);
 
         foreach (var entry in section.Entries)
         {

@@ -55,7 +55,7 @@ namespace PdfSearchWPF.SearchEngine
     public event Action<SearchResult>? OnFileSearched;
 
 
-    public async Task<IEnumerable<SearchResult>> SearchAsync(string searchPath, string searchTerm, SearchOption searchOption, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<SearchResult>> SearchAsync(string searchPath, string searchTerm, SearchOption searchOption, List<string> fileExtensions, CancellationToken cancellationToken = default)
     {
       var results = new List<SearchResult>();
 
@@ -63,7 +63,14 @@ namespace PdfSearchWPF.SearchEngine
 
       var tasks = new List<Task>();
 
-      var files = IO.Directory.GetFiles(searchPath, "*.*", searchOption.HasFlag(SearchOption.Recursive) ? IO.SearchOption.AllDirectories : IO.SearchOption.TopDirectoryOnly).ToList();
+      var files = fileExtensions
+        .SelectMany(x => IO.Directory.GetFiles(
+          searchPath,
+          $"*.{x.Replace(".", "")}",
+          searchOption.HasFlag(SearchOption.Recursive)
+          ? IO.SearchOption.AllDirectories
+          : IO.SearchOption.TopDirectoryOnly))
+        .ToList();
 
       OnStartSearch?.Invoke(files.Count);
 
@@ -80,6 +87,9 @@ namespace PdfSearchWPF.SearchEngine
             foreach (var strategy in Strategies)
             {
               SearchResult result;
+
+              if (!strategy.IsActivated)
+                continue;
 
               if (!strategy.CanHandle(file))
               {

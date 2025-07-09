@@ -1,18 +1,33 @@
 ﻿using Microsoft.Win32;
 using PdfSearchWPF.Commands;
 using PdfSearchWPF.Model;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PdfSearchWPF.ViewModel
 {
-  internal class SearchBarViewModel(SearchEngine.SearchEngine searchEngine) : ViewModelBase
+  internal class SearchBarViewModel : ViewModelBase
   {
-    private readonly SearchEngine.SearchEngine _searchEngine = searchEngine;
+    private readonly SearchEngine.SearchEngine _searchEngine;
 
     private string? _searchPath;
     private string? _searchTerm;
     private SearchOption _searchOptions;
     private bool _isSearching;
+
+    public SearchBarViewModel(SearchEngine.SearchEngine searchEngine)
+    {
+      _searchEngine = searchEngine;
+
+
+      SelectedFileTypes.CollectionChanged += SelectedFileTypes_CollectionChanged;
+    }
+
+    public ObservableCollection<string> AvailableFileTypes { get; } = ["All Files", ".pdf", ".docx", ".txt", ".xlsx", ".csv", ".xml", ".json"];
+
+    public ObservableCollection<string> SelectedFileTypes { get; } = [];
 
     public bool CanSearch
     {
@@ -67,6 +82,7 @@ namespace PdfSearchWPF.ViewModel
           OnPropertyChanged(nameof(UseRegex));
           OnPropertyChanged(nameof(MatchWholeWord));
           OnPropertyChanged(nameof(MatchCase));
+          OnPropertyChanged(nameof(ScanRecursive));
         }
       }
     }
@@ -101,6 +117,17 @@ namespace PdfSearchWPF.ViewModel
       }
     }
 
+    public bool ScanRecursive
+    {
+      get => SearchOptions.HasFlag(SearchOption.Recursive);
+      set
+      {
+        SetOption(SearchOption.Recursive, value);
+        OnPropertyChanged(nameof(ScanRecursive));
+      }
+    }
+
+    public ICommand ToggleRecursiveCommand => new RelayCommand(() => ScanRecursive = !ScanRecursive);
     public ICommand ToggleRegexCommand => new RelayCommand(() => UseRegex = !UseRegex);
     public ICommand ToggleMatchWholeWordCommand => new RelayCommand(() => MatchWholeWord = !MatchWholeWord);
     public ICommand ToggleMatchCaseCommand => new RelayCommand(() => MatchCase = !MatchCase);
@@ -136,12 +163,45 @@ namespace PdfSearchWPF.ViewModel
         _ = SearchPath ?? throw new ArgumentNullException("SearchPath");
         _ = SearchTerm ?? throw new ArgumentNullException("SearchString");
 
-        await _searchEngine.SearchAsync(SearchPath, SearchTerm, SearchOptions);
+        await _searchEngine.SearchAsync(
+          SearchPath,
+          SearchTerm,
+          SearchOptions,
+          SelectedFileTypes.Contains("All Files") ? ["*.*"] : [.. SelectedFileTypes]
+          );
       }
       finally
       {
         IsSearching = false;
       }
     }
+
+    private void SelectedFileTypes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+      if (e.Action == NotifyCollectionChangedAction.Add)
+      {
+        if (!SelectedFileTypes.Contains("All Files"))
+          return;
+
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+          if (e.NewItems[0].ToString() == "All Files")
+          {
+            for (int i = SelectedFileTypes.Count - 1; i >= 0; i--)
+            {
+              if (SelectedFileTypes[i] != "All Files")
+                SelectedFileTypes.RemoveAt(i);
+            }
+          }
+          else
+          {
+            SelectedFileTypes.Remove("All Files");
+          }
+        });
+
+      }
+    }
+
+
   }
 }

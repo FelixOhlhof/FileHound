@@ -1,0 +1,81 @@
+﻿<UserControl  x:Name="Root"
+             x:Class="PdfSearchWPF.Controls.MultiSelectDropdown"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PdfSearchWPF.Controls"
+             xmlns:converters="clr-namespace:PdfSearchWPF.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="150">
+    <UserControl.Resources>
+        <converters:ItemSelectedToBrushConverter x:Key="ItemSelectedToBrushConverter"
+                                                 SelectedBrush="LightBlue"
+                                                 DefaultBrush="Transparent"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <ToggleButton x:Name="DropdownButton"
+                      Content="{Binding SelectedItemsDisplay, ElementName=Root}"
+                      ToolTip="{Binding SelectedItemsDisplay, ElementName=Root}"
+                      Background="White"
+                      BorderBrush="Gray"
+                      BorderThickness="1"
+                      Padding="5"
+                      HorizontalContentAlignment="Left" 
+                      Margin="1"
+                      Click="DropdownButton_Click"
+                      />
+
+        <Popup x:Name="DropdownPopup"
+               PlacementTarget="{Binding ElementName=DropdownButton}"
+               Placement="Bottom"
+               StaysOpen="False"
+               Width="{Binding ActualWidth, ElementName=DropdownButton}"
+               MinHeight="50"
+               MaxHeight="200">
+
+            <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <ItemsControl x:Name="ItemsControlList" ItemsSource="{Binding ItemsSource, ElementName=Root}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="4" Margin="2" Tag="{Binding}"
+                                                    MouseLeftButtonDown="Item_MouseLeftButtonDown">
+                                            <Border.Background>
+                                                <MultiBinding Converter="{StaticResource ItemSelectedToBrushConverter}">
+                                                    <Binding />
+                                                    <!-- aktuelles Item -->
+                                                    <Binding Path="SelectedItems" ElementName="Root" />
+                                                    <!-- SelectedItems -->
+                                                </MultiBinding>
+                                            </Border.Background>
+                                            <TextBlock Text="{Binding}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ScrollViewer>
+
+
+                    <TextBox Name="addExtension" Grid.Row="1" Margin="5" Foreground="Gray" Background="Transparent" VerticalContentAlignment="Center" FontSize="15" />
+
+                    <Button Grid.Row="1" HorizontalAlignment="Right" Width="30" VerticalAlignment="Center" Margin="0, -6, 0, 0" Background="Transparent" Click="Button_Click">
+                        <TextBlock Text="+" FontSize="22"  Foreground="Gray" />
+                    </Button>
+
+                </Grid>
+            </Border>
+        </Popup>
+    </Grid>
+</UserControl>
