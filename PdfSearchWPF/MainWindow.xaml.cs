@@ -1,4 +1,6 @@
-﻿using PdfSearchWPF.ViewModel;
+﻿using PdfSearchWPF.SearchEngine;
+using PdfSearchWPF.SearchEngine.SearchStrategies;
+using PdfSearchWPF.ViewModel;
 using System.Windows;
 
 namespace PdfSearchWPF
@@ -17,9 +19,10 @@ namespace PdfSearchWPF
       SearchEngine.SearchEngine searchEngine = new(
         strategies:
         [
-          new SearchEngine.SearchStrategies.TextSearchStrategy(),
-          new SearchEngine.SearchStrategies.PdfSearchStrategy(),
-        ]);
+          new TextSearchStrategy(Settings.Load($"{TextSearchStrategy.Name}.json")),
+          new PdfSearchStrategy(Settings.Load($"{PdfSearchStrategy.Name}.json")),
+        ],
+        Settings.Load($"{SearchEngine.SearchEngine.Name}.json"));
 
       MainWindowViewModel viewModel =
         new(

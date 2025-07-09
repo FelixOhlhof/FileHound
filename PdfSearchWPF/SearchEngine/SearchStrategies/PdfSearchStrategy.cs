@@ -8,11 +8,11 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
 {
   internal class PdfSearchStrategy(Settings? settings = null, bool isActivated = true) : ISearchStrategy
   {
-    public string Name => "PDF Search";
+    public static string Name => "PDF Search";
 
-    public string Description => "Default PDF Search Strategy";
+    public static string Description => "Default PDF Search Strategy";
 
-    public List<string> SupportedFileExtensions => ["pdf"];
+    public static List<string> SupportedFileExtensions => ["pdf"];
 
     public Settings? Settings { get; set; } = settings;
 

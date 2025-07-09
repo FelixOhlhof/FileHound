@@ -22,9 +22,9 @@ namespace PdfSearchWPF.SearchEngine
       _settings = settings;
     }
 
-    public string Name => "Search Engine";
+    public static string Name => "Search Engine";
 
-    public string Description => "Default Search Engine";
+    public static string Description => "Default Search Engine";
 
     public IEnumerable<SettingDefinition> SupportedSettings => [
         new SettingDefinition
@@ -93,7 +93,7 @@ namespace PdfSearchWPF.SearchEngine
 
               if (!strategy.CanHandle(file))
               {
-                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Strategy = strategy.Name, Error = new FileTypeNotSupportedException(file) };
+                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Strategy = strategy.GetType().Name, Error = new FileTypeNotSupportedException(file) };
                 results.Add(result);
                 OnFileSearched?.Invoke(result);
                 continue;
@@ -101,14 +101,14 @@ namespace PdfSearchWPF.SearchEngine
 
               try
               {
-                result = strategy.SearchFile(file, searchTerm, searchOption) ?? throw new NullReferenceException($"search strategy {strategy.Name} returned null");
+                result = strategy.SearchFile(file, searchTerm, searchOption) ?? throw new NullReferenceException($"search strategy {strategy.GetType().Name} returned null");
               }
               catch (Exception e)
               {
-                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Error = new SearchResultException(file, $"error while executing {strategy.Name} on file {file}", e) };
+                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Error = new SearchResultException(file, $"error while executing {strategy.GetType().Name} on file {file}", e) };
               }
 
-              result.Strategy = strategy.Name;
+              result.Strategy = strategy.GetType().Name;
 
               results.Add(result);
               OnFileSearched?.Invoke(result);

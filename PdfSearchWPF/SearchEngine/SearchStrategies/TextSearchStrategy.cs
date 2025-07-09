@@ -7,15 +7,15 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
 {
   internal class TextSearchStrategy(Settings? settings = null, bool isActivated = true) : ISearchStrategy
   {
-    public string Name => "Text Search";
+    public static string Name => "Text Search";
 
-    public string Description => "Default Text Search Strategy";
+    public static string Description => "Default Text Search Strategy";
+
+    public static List<string> SupportedFileExtensions => ["*"];
 
     public Settings? Settings { get; set; } = settings;
 
     public bool IsActivated { get; set; } = isActivated;
-
-    public List<string> SupportedFileExtensions => ["*"];
 
     public IEnumerable<SettingDefinition> SupportedSettings => [
             new SettingDefinition
@@ -44,7 +44,7 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
 
 
     public bool CanHandle(string filePath)
-        => IO.Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase);
+        => true;
 
     public SearchResult SearchFile(
     string filePath,

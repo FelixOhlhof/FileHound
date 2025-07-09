@@ -5,8 +5,8 @@ namespace PdfSearchWPF.SearchEngine
 {
   public interface ISearchEngine : IConfigurable
   {
-    string Name { get; }
-    string Description { get; }
+    static string? Name { get; }
+    static string? Description { get; }
 
     List<ISearchStrategy> Strategies { get; set; }
 

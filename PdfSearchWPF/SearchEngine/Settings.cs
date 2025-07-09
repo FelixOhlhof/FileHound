@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.IO;
+using System.Text.Json;
 
 namespace PdfSearchWPF.SearchEngine
 {
@@ -33,6 +35,56 @@ namespace PdfSearchWPF.SearchEngine
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _values.GetEnumerator();
+    }
+
+    public void Save(string fileName)
+    {
+      string path = Path.Join(".", fileName);
+
+      Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+
+      var json = JsonSerializer.Serialize(_values, new JsonSerializerOptions
+      {
+        WriteIndented = true
+      });
+
+      File.WriteAllText(path, json);
+    }
+
+    public static Settings Load(string fileName)
+    {
+      string path = Path.Join(".", fileName);
+
+      var settings = new Settings();
+
+      if (!File.Exists(path))
+        return settings;
+
+      var json = File.ReadAllText(path);
+
+      var temp = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json)!;
+
+      foreach (var kvp in temp)
+      {
+        if (kvp.Value.ValueKind == JsonValueKind.String)
+          settings._values[kvp.Key] = kvp.Value.GetString()!;
+        else if (kvp.Value.ValueKind == JsonValueKind.Number && kvp.Value.TryGetInt32(out int intVal))
+          settings._values[kvp.Key] = intVal;
+        else if (kvp.Value.ValueKind == JsonValueKind.True || kvp.Value.ValueKind == JsonValueKind.False)
+          settings._values[kvp.Key] = kvp.Value.GetBoolean();
+        else if (kvp.Value.ValueKind == JsonValueKind.Array)
+        {
+          var list = new List<string>();
+          foreach (var item in kvp.Value.EnumerateArray())
+          {
+            if (item.ValueKind == JsonValueKind.String)
+              list.Add(item.GetString()!);
+          }
+          settings._values[kvp.Key] = list;
+        }
+      }
+
+      return settings;
     }
   }
 
