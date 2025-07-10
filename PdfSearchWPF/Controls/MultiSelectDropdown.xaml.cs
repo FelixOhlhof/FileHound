@@ -168,6 +168,24 @@ namespace PdfSearchWPF.Controls
       if (DropdownButton.IsChecked == true)
         DropdownPopup.IsOpen = !DropdownPopup.IsOpen;
     }
+
+    private void ItemsControlList_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+      switch (e.Key)
+      {
+        case Key.Delete:
+          if (SelectedItems.Count > 0)
+          {
+            ItemsSource.Remove(SelectedItems[SelectedItems.Count - 1]);
+            SelectedItems.Remove(SelectedItems[SelectedItems.Count - 1]);
+          }
+          break;
+        case Key.Enter:
+          if (addExtension.Text != "")
+            Button_Click(sender, new RoutedEventArgs());
+          break;
+      }
+    }
   }
 }
 

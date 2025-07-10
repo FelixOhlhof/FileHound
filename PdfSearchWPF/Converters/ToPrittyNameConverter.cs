@@ -1,5 +1,5 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
+﻿using PdfSearchWPF.Extensions;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace PdfSearchWPF.Converters
@@ -11,13 +11,7 @@ namespace PdfSearchWPF.Converters
       if (value is not string)
         return value;
 
-      string snakeToSpace = Regex.Replace((string)value, @"[_\-]", " ");
-
-      string camelToSpace = Regex.Replace(snakeToSpace, @"(?<=[a-z])([A-Z])", " $1");
-
-      TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-      string result = textInfo.ToTitleCase(camelToSpace.ToLower());
-      return result;
+      return ((string)value).ToPrittyString();
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

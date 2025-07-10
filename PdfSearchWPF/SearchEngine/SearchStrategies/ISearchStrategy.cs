@@ -10,5 +10,13 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
     static List<string>? SupportedFileExtensions { get; }
     bool CanHandle(string filePath);
     SearchResult SearchFile(string filePath, string searchTerm, SearchOption options);
+
+    static string GetName(ISearchStrategy searchStrategy)
+    {
+      var strategyType = searchStrategy.GetType();
+      var strategyNameProp = strategyType.GetProperty("Name", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+      string strategyName = strategyNameProp?.GetValue(null)?.ToString() ?? strategyType.Name;
+      return strategyName;
+    }
   }
 }

@@ -1,6 +1,8 @@
 ﻿
 using PdfSearchWPF.Commands;
+using PdfSearchWPF.Extensions;
 using PdfSearchWPF.Model;
+using PdfSearchWPF.SearchEngine;
 using PdfSearchWPF.SearchEngine.SearchStrategies;
 using System.Windows.Input;
 
@@ -45,7 +47,8 @@ namespace PdfSearchWPF.ViewModel
     {
       _searchEngineSettings = new SettingSection
       {
-        DisplayName = "Search Engine Settings"
+        Name = ISearchEngine.GetName(_searchEngine),
+        DisplayName = $"{ISearchEngine.GetName(_searchEngine).ToPrittyString()} Settings"
       };
 
       foreach (var def in _searchEngine.SupportedSettings)
@@ -61,8 +64,8 @@ namespace PdfSearchWPF.ViewModel
       {
         var section = new SettingSection
         {
-          Name = strategy.GetType().Name,
-          DisplayName = $"{strategy.GetType().Name} Settings"
+          Name = ISearchStrategy.GetName(strategy),
+          DisplayName = $"{ISearchStrategy.GetName(strategy).ToPrittyString()} Settings"
         };
 
         section.Entries.Add(new SettingEntry(new SearchEngine.SettingDefinition("IsActive", "De-/Activates this Search Strategy", strategy.IsActivated, SearchEngine.SettingType.Bool), strategy.IsActivated));
@@ -87,14 +90,11 @@ namespace PdfSearchWPF.ViewModel
         _searchEngine.Settings.Set(entry.Definition.Name, entry.Value);
       }
 
-      var searchEngineType = _searchEngine.GetType();
-      var searchEngineNameProp = searchEngineType.GetProperty("Name", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-      string searchEngineName = searchEngineNameProp?.GetValue(null)?.ToString() ?? searchEngineType.Name;
-      _searchEngine.Settings.Save($"{searchEngineName}.json");
+      _searchEngine.Settings.Save($"{ISearchEngine.GetName(_searchEngine)}.json");
 
       foreach (var section in _strategySettings)
       {
-        var strategy = _searchEngine.Strategies.First(x => x.GetType().Name == section.Name);
+        var strategy = _searchEngine.Strategies.First(x => ISearchStrategy.GetName(x) == section.Name);
         strategy.Settings ??= new();
 
         strategy.IsActivated = (bool)(section.Entries.Find(x => x.Definition.Name == "IsActive")?.Value ?? true);
@@ -104,10 +104,7 @@ namespace PdfSearchWPF.ViewModel
           strategy.Settings.Set(entry.Definition.Name, entry.Value);
         }
 
-        var strategyType = strategy.GetType();
-        var strategyNameProp = strategyType.GetProperty("Name", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-        string strategyName = strategyNameProp?.GetValue(null)?.ToString() ?? strategyType.Name;
-        strategy.Settings.Save($"{strategyName}.json");
+        strategy.Settings.Save($"{ISearchStrategy.GetName(strategy)}.json");
 
       }
     }

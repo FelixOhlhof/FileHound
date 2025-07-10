@@ -93,7 +93,7 @@ namespace PdfSearchWPF.SearchEngine
 
               if (!strategy.CanHandle(file))
               {
-                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Strategy = strategy.GetType().Name, Error = new FileTypeNotSupportedException(file) };
+                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Strategy = ISearchStrategy.GetName(strategy), Error = new FileTypeNotSupportedException(file) };
                 results.Add(result);
                 OnFileSearched?.Invoke(result);
                 continue;
@@ -101,14 +101,14 @@ namespace PdfSearchWPF.SearchEngine
 
               try
               {
-                result = strategy.SearchFile(file, searchTerm, searchOption) ?? throw new NullReferenceException($"search strategy {strategy.GetType().Name} returned null");
+                result = strategy.SearchFile(file, searchTerm, searchOption) ?? throw new NullReferenceException($"search strategy {ISearchStrategy.GetName(strategy)} returned null");
               }
               catch (Exception e)
               {
-                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Error = new SearchResultException(file, $"error while executing {strategy.GetType().Name} on file {file}", e) };
+                result = new SearchResult { FileName = file, SearchTerm = searchTerm, Error = new SearchResultException(file, $"error while executing {ISearchStrategy.GetName(strategy)} on file {file}", e) };
               }
 
-              result.Strategy = strategy.GetType().Name;
+              result.Strategy = ISearchStrategy.GetName(strategy);
 
               results.Add(result);
               OnFileSearched?.Invoke(result);

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
+using IO = System.IO;
 
 namespace PdfSearchWPF.ViewModel
 {
@@ -21,11 +22,11 @@ namespace PdfSearchWPF.ViewModel
     {
       _searchEngine = searchEngine;
 
-
       SelectedFileTypes.CollectionChanged += SelectedFileTypes_CollectionChanged;
+      AvailableFileTypes.CollectionChanged += AvailableFileTypes_CollectionChanged;
     }
 
-    public ObservableCollection<string> AvailableFileTypes { get; } = ["All Files", ".pdf", ".docx", ".txt", ".xlsx", ".csv", ".xml", ".json"];
+    public ObservableCollection<string> AvailableFileTypes { get; } = loadAvailableFileTypes();
 
     public ObservableCollection<string> SelectedFileTypes { get; } = [];
 
@@ -205,6 +206,27 @@ namespace PdfSearchWPF.ViewModel
       }
     }
 
+    private void AvailableFileTypes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+      string fileTypesPath = IO.Path.Join(".", Properties.Settings.Default.AvailableFileTypesPath);
 
+      var json = System.Text.Json.JsonSerializer.Serialize(AvailableFileTypes);
+      IO.File.WriteAllText(fileTypesPath, json);
+    }
+
+    private static ObservableCollection<string> loadAvailableFileTypes()
+    {
+      string fileTypesPath = IO.Path.Join(".", Properties.Settings.Default.AvailableFileTypesPath);
+
+      if (IO.File.Exists(fileTypesPath))
+      {
+        var json = IO.File.ReadAllText(fileTypesPath);
+        var loaded = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+
+        return [.. loaded];
+      }
+
+      return ["All Files", ".pdf", ".docx", ".txt", ".xlsx", ".csv", ".xml", ".json"];
+    }
   }
 }

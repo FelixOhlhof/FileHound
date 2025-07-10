@@ -15,5 +15,13 @@ namespace PdfSearchWPF.SearchEngine
     event Action<int>? OnStartSearch;
 
     Task<IEnumerable<SearchResult>> SearchAsync(string searchPath, string searchTerm, SearchOption searchOption, List<string> fileExtensions, CancellationToken cancellationToken = default);
+
+    static string GetName(ISearchEngine searchEngine)
+    {
+      var strategyType = searchEngine.GetType();
+      var strategyNameProp = strategyType.GetProperty("Name", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+      string strategyName = strategyNameProp?.GetValue(null)?.ToString() ?? strategyType.Name;
+      return strategyName;
+    }
   }
 }

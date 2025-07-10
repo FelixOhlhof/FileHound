@@ -21,14 +21,26 @@
         <ToggleButton x:Name="DropdownButton"
                       Content="{Binding SelectedItemsDisplay, ElementName=Root}"
                       ToolTip="{Binding SelectedItemsDisplay, ElementName=Root}"
-                      Background="White"
-                      BorderBrush="Gray"
                       BorderThickness="1"
                       Padding="5"
                       HorizontalContentAlignment="Left" 
                       Margin="1"
                       Click="DropdownButton_Click"
-                      />
+                      >
+            <ToggleButton.Style>
+                <Style TargetType="ToggleButton">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Border BorderBrush="{TemplateBinding BorderBrush}" Background="White" BorderThickness="1">
+                                    <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ToggleButton.Style>
+        </ToggleButton>
 
         <Popup x:Name="DropdownPopup"
                PlacementTarget="{Binding ElementName=DropdownButton}"
@@ -36,7 +48,7 @@
                StaysOpen="False"
                Width="{Binding ActualWidth, ElementName=DropdownButton}"
                MinHeight="50"
-               MaxHeight="200">
+               MaxHeight="200" KeyDown="ItemsControlList_PreviewKeyDown">
 
             <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="4">
                 <Grid>
@@ -59,7 +71,7 @@
                                                     <!-- SelectedItems -->
                                                 </MultiBinding>
                                             </Border.Background>
-                                            <TextBlock Text="{Binding}" />
+                                            <TextBlock Text="{Binding}"/>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

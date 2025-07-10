@@ -22,5 +22,17 @@ namespace PdfSearchWPF.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("AvailableFileTypes.json")]
+        public string AvailableFileTypesPath {
+            get {
+                return ((string)(this["AvailableFileTypesPath"]));
+            }
+            set {
+                this["AvailableFileTypesPath"] = value;
+            }
+        }
     }
 }
