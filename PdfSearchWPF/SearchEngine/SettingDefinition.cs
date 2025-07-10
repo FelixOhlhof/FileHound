@@ -6,6 +6,7 @@
     Number,
     Bool,
     Date,
+    Enum,
   }
 
   public class SettingDefinition(string name, string description, object standardValue, SettingType valueType)

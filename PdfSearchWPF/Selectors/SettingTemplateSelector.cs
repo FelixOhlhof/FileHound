@@ -11,6 +11,7 @@ namespace PdfSearchWPF.Selectors
     public DataTemplate? TextTemplate { get; set; }
     public DataTemplate? NumberTemplate { get; set; }
     public DataTemplate? DateTemplate { get; set; }
+    public DataTemplate? EnumTemplate { get; set; }
 
     public override DataTemplate? SelectTemplate(object item, DependencyObject container)
     {
@@ -22,6 +23,7 @@ namespace PdfSearchWPF.Selectors
           SettingType.Text => TextTemplate,
           SettingType.Number => NumberTemplate,
           SettingType.Date => DateTemplate,
+          SettingType.Enum => EnumTemplate,
           _ => base.SelectTemplate(item, container)
         };
       }

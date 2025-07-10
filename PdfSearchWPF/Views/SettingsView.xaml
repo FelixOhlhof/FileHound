@@ -30,11 +30,16 @@
             <DatePicker SelectedDate="{Binding Value, Mode=TwoWay}" BorderBrush="Transparent" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
         </DataTemplate>
 
+        <DataTemplate x:Key="EnumTemplate">
+            <ComboBox ItemsSource="{Binding Definition.StandardValue, Mode=TwoWay}" SelectedItem="{Binding Value}" Width="100" BorderBrush="Transparent" />
+        </DataTemplate>
+
         <selectors:SettingTemplateSelector x:Key="SettingTemplateSelector"
                                    BoolTemplate="{StaticResource BoolTemplate}"
                                    TextTemplate="{StaticResource TextTemplate}"
                                    NumberTemplate="{StaticResource NumberTemplate}"
-                                   DateTemplate="{StaticResource DateTemplate}" />
+                                   DateTemplate="{StaticResource DateTemplate}" 
+                                   EnumTemplate ="{StaticResource EnumTemplate}"/>
 
         <Style x:Key="SettingHeadline" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Bold" />
@@ -100,7 +105,7 @@
 
                                                 <TextBlock Text="{Binding Definition.Name, Converter={StaticResource                        ToPrittyNameConverter}}" Width="150" ToolTip="{Binding                                  Definition.Description}"/>
 
-                                                <ContentControl Grid.Column="1" HorizontalAlignment="Right"                                 Content="{Binding}" ContentTemplateSelector="{StaticResource                            SettingTemplateSelector}" />
+                                                <ContentControl Grid.Column="1" HorizontalAlignment="Right"                                 Content="{Binding }" ContentTemplateSelector="{StaticResource                            SettingTemplateSelector}" />
                                             </Grid>
                                             
                                         </DataTemplate>

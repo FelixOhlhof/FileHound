@@ -29,8 +29,8 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
             (
                 name : "Encoding",
                 description : "Choose between UTF8, Unicode or ASCII.",
-                standardValue : "UTF8",
-                valueType : SettingType.Text
+                standardValue : new List<string>{"UTF8", "Unicode", "ASCII"},
+                valueType : SettingType.Enum
             ),
             new SettingDefinition
             (

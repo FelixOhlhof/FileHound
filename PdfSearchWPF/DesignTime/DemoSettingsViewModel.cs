@@ -23,6 +23,9 @@ namespace PdfSearchWPF.DesignTime
             },
             {
               new SettingEntry(new SettingDefinition("BufferSize", "Size of buffer", 1024, SettingType.Number), 1024)
+            },
+            {
+              new SettingEntry(new SettingDefinition("Encoding", "Encoding", new List<string>{"abc", "def"}, SettingType.Enum), "out")
             }
           }
         },
