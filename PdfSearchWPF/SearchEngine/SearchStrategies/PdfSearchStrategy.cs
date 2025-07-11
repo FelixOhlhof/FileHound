@@ -1,13 +1,22 @@
-﻿
-using PdfSearchWPF.Model;
+﻿using PdfSearchWPF.Model;
 using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
+using UglyToad.PdfPig.Content;
 using IO = System.IO;
+using OCR = Tesseract;
 
 namespace PdfSearchWPF.SearchEngine.SearchStrategies
 {
   internal class PdfSearchStrategy(Settings? settings = null, bool isActivated = true) : ISearchStrategy
   {
+    private readonly Lazy<OCR.TesseractEngine> _tesseractEngine = new(() =>
+      {
+        string language = "eng";
+        settings?.TryGet("OCR Language", out language);
+        return new OCR.TesseractEngine("C:\\Users\\felix\\Downloads\\", language);
+      }
+    );
+
     public static string Name => "PDF Search";
 
     public static string Description => "Default PDF Search Strategy";
@@ -25,6 +34,20 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
           description: "Counts all occurrences.",
           standardValue: true,
           valueType: SettingType.Bool
+        ),
+        new SettingDefinition
+        (
+          name: "OCR",
+          description: "Scan Images with OCR in PDF.",
+          standardValue: false,
+          valueType: SettingType.Bool
+        ),
+        new SettingDefinition
+        (
+          name: "OCR Language",
+          description: "Language in which the PDF is written.",
+          standardValue : new List<string>{"eng", "deu"},
+          valueType: SettingType.Enum
         )
       ];
 
@@ -40,6 +63,8 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
       bool matchCase = searchOptions.HasFlag(SearchOption.MatchCase);
       bool countAll = true;
       Settings?.TryGet("CountAll", out countAll);
+      bool ocr = false;
+      Settings?.TryGet("OCR", out ocr);
 
       int occurrences = 0;
       Regex? regex = null;
@@ -66,11 +91,14 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
             break;
 
           string text = page.Text;
+          text += ocr ? getOcrOfPage(page) : string.Empty;
 
           if (useRegex && regex != null)
           {
             if (countAll)
+            {
               occurrences += regex.Matches(text).Count;
+            }
             else
             {
               occurrences = regex.IsMatch(text) ? 1 : 0;
@@ -123,6 +151,31 @@ namespace PdfSearchWPF.SearchEngine.SearchStrategies
         SearchTerm = searchTerm,
         Occurrences = occurrences
       };
+    }
+
+    private string getOcrOfPage(Page page)
+    {
+      string extractedText = string.Empty;
+
+      var imgs = page.GetImages();
+
+      foreach (var pdfImage in imgs)
+      {
+        if (pdfImage.TryGetPng(out var pngBytes))
+        {
+          var pixImg = OCR.Pix.LoadFromMemory(pngBytes);
+          using var ocrPage = _tesseractEngine.Value.Process(pixImg);
+          extractedText += ocrPage.GetText();
+        }
+        else
+        {
+          var pixImg = OCR.Pix.LoadFromMemory(pdfImage.RawBytes.ToArray());
+          using var ocrPage = _tesseractEngine.Value.Process(pixImg);
+          extractedText += ocrPage.GetText();
+        }
+      }
+
+      return extractedText;
     }
   }
 }

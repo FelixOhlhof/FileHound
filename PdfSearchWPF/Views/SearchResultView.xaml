@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PdfSearchWPF.Views"
              xmlns:converters="clr-namespace:PdfSearchWPF.Converters"
+             xmlns:helpers="clr-namespace:PdfSearchWPF.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="250" d:DesignWidth="400"
              >
@@ -12,12 +13,16 @@
         <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
         <converters:ObjectToTypeName x:Key="ToTypeName" />
+        <converters:BoolOpenCloseConverter x:Key="BoolToOpenClose" />
+        
+        <helpers:BindingProxy x:Key="ViewModelProxy" Data="{Binding}" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
         <DataGrid Grid.Row="0" ItemsSource="{Binding SearchResults}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="FileName" Binding="{Binding FileName}" Width="*" IsReadOnly="True"/>
@@ -29,10 +34,36 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Strategy" Binding="{Binding Strategy}" Width="*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Error" Binding="{Binding Error.Message}" Width="*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Error Type" Binding="{Binding Error, Converter={StaticResource ToTypeName}}" Width="*" IsReadOnly="True"/>
+
+                <DataGridTemplateColumn Header="Error"
+                                        Width="*"
+                                        Visibility="{Binding Data.ShowDetails,
+                                        Source={StaticResource ViewModelProxy},
+                                        Converter={StaticResource BoolToVis}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Error}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Error Type"
+                                        Width="*"
+                                        Visibility="{Binding Data.ShowDetails,
+                                            Source={StaticResource ViewModelProxy},
+                                            Converter={StaticResource BoolToVis}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Error, Converter={StaticResource ToTypeName}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
             </DataGrid.Columns>
         </DataGrid >
+
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Height="12" Width="15" Margin="7" Content="{Binding ShowDetails, Converter={StaticResource BoolToOpenClose}}" FontSize="9" FontWeight="Bold" Background="Transparent" Command="{Binding ToggleShowDetailsCommand}"/>
+
         <Grid Grid.Row="1" Visibility="{Binding SearchProgress.IsFinished, Converter={StaticResource InverseBoolToVis}}" Height="20">
             <ProgressBar 
                          Minimum="0"

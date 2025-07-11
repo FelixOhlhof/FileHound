@@ -1,6 +1,8 @@
-﻿using PdfSearchWPF.Exceptions;
+﻿using PdfSearchWPF.Commands;
+using PdfSearchWPF.Exceptions;
 using PdfSearchWPF.Model;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace PdfSearchWPF.ViewModel
 {
@@ -9,6 +11,14 @@ namespace PdfSearchWPF.ViewModel
     private ObservableCollection<SearchResult> _searchResults = new();
 
     private SearchProgress _searchProgress = new();
+
+    private bool _showDetails;
+
+    public bool ShowDetails
+    {
+      get { return _showDetails; }
+      set { SetField(ref _showDetails, value); }
+    }
 
     public SearchProgress SearchProgress
     {
@@ -27,6 +37,11 @@ namespace PdfSearchWPF.ViewModel
         }
       }
     }
+
+    public ICommand ToggleShowDetailsCommand => new RelayCommand(() =>
+    {
+      ShowDetails = !ShowDetails;
+    });
 
     public bool HasResults => SearchResults != null && SearchResults.Count > 0;
 
